@@ -19,5 +19,13 @@ namespace FTPClient.DAL.Services.Response
         {
             return context.Set<T>().Find(id);
         }
+
+        public List<T> GetEntities()
+        {
+            List<T> entities = new List<T>();
+            entities.AddRange(context.Set<T>());
+
+            return entities;
+        }
     }
 }

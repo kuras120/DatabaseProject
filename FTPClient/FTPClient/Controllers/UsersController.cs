@@ -52,9 +52,28 @@ namespace FTPClient.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        db.Users.Add(user);
+
+                        Directory directory = new Directory() { ParentDirectoryId = 1, Name = user.Login + "'sFolder" };
+                        db.Directories.Add(directory);
+
+                        DirectoryAccess access =
+                            new DirectoryAccess() { AccessType = 7, Directory = directory, Permissions = 7, User = user };
+                        db.DirectoryAccesses.Add(access);
+
+                        db.SaveChanges();
+                        transaction.Commit();
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                    }
+                }
             }
 
             return View(user);
@@ -112,7 +131,27 @@ namespace FTPClient.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
+
+            List<DirectoryAccess> directories = db.DirectoryAccesses.Where(e => e.User.Id == user.Id).ToList();
+            foreach (var dir in directories)
+            {
+                db.Directories.RemoveRange(db.Directories.Where(e => e.Id == dir.DirectoryId));
+            }
+
+            db.DirectoryAccesses.RemoveRange(db.DirectoryAccesses.Where(e => e.User.Id == user.Id));
+
+            List<FileAccess> fileAccesses = new List<FileAccess>();
+
+            fileAccesses = db.FileAccesses.Where(e => e.User.Id == user.Id).ToList();
+            foreach (var file in fileAccesses)
+            {
+                db.Files.RemoveRange(db.Files.Where(e => e.Id == file.FileId));
+            }
+
+            db.FileAccesses.RemoveRange(db.FileAccesses.Where(e => e.User.Id == user.Id));
+
             db.Users.Remove(user);
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }

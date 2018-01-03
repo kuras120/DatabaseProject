@@ -160,6 +160,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\DataModel.cs" />
+    <Compile Include="DAL\Filters\IFilter.cs" />
+    <Compile Include="DAL\InitializeDatabase.cs" />
+    <Compile Include="DAL\RandomString.cs" />
     <Compile Include="DAL\Services\IRequest.cs" />
     <Compile Include="DAL\Services\IResponse.cs" />
     <Compile Include="DAL\Services\Request\Request.cs" />

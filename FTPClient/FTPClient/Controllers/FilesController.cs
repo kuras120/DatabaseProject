@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FTPClient.DAL;
+using FTPClient.DAL.Services.Request;
 using FTPClient.Models;
 
 namespace FTPClient.Controllers
@@ -49,11 +50,43 @@ namespace FTPClient.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,DirectoryId,Name,Path,Size,UploadTime")] File file)
+        public ActionResult Create([Bind(Include = "Id,DirectoryId,Name,Path,Size")] File file)
         {
             if (ModelState.IsValid)
             {
-                db.Files.Add(file);
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        file.UploadTime = DateTime.Now;
+
+                        db.Files.Add(file);
+
+                        List<DirectoryAccess> accesses = db.DirectoryAccesses.Where(e => e.DirectoryId == file.DirectoryId).ToList();
+
+                        foreach (var access in accesses)
+                        {
+                            if (access.User.Login == "admin")
+                            {
+                                FileAccess ac =
+                                    new FileAccess() {AccessType = 7, File = file, Permissions = 7, User = access.User};
+                                db.FileAccesses.Add(ac);
+                            }
+                            else
+                            {
+                                FileAccess ac1 =
+                                    new FileAccess() {AccessType = 3, File = file, Permissions = 3, User = access.User};
+                                db.FileAccesses.Add(ac1);
+                            }
+                        }
+                        db.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                    }
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
