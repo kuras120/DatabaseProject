@@ -1,24 +1,22 @@
 ﻿@model IEnumerable<FTPClient.Models.Group>
 
-@{
-    ViewBag.Title = "Index";
+@if(ViewBag.canCreateGroup)
+{
+    <p>
+        @Html.ActionLink("Utwórz", "Create")
+    </p>
 }
-
-<h2>Index</h2>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Nazwa
         </th>
         <th>
             Operacje
         </th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in ViewBag.UserGroups) {
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Name)
