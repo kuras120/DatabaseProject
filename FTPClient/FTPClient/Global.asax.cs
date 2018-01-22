@@ -28,38 +28,7 @@ namespace FTPClient
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            for (var i = 0; i < 100; i++)
-            {
-                System.Diagnostics.Debug.Write("-");
-            }
-            System.Diagnostics.Debug.Write("\n\n");
-
-            try
-            {
-                DataModel context = new DataModel();
-                Request<User> request = new Request<User>(context);
-                User user = new User
-                {
-                    Login = "Wojciech",
-                    Password = "admin1",
-                    SignUpDate = DateTime.Now,
-                    LastPasswordChange = DateTime.Now
-                };
-                request.DeleteAll();
-
-                System.Diagnostics.Debug.WriteLine("Udalo sie!");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
-
-
-            for (var i = 0; i < 100; i++)
-            {
-                System.Diagnostics.Debug.Write("-");
-            }
-            System.Diagnostics.Debug.Write("\n\n");
+          
         }
     }
 }
