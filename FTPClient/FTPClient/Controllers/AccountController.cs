@@ -16,7 +16,7 @@ namespace FTPClient.Controllers
 
         public ActionResult Login()
         {
-            return View("Index");
+            return View();
         }
     }
 }
