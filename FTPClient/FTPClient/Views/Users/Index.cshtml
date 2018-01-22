@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FTPClient.Models.Directory>
+﻿@model IEnumerable<FTPClient.Models.User>
 
 @{
     ViewBag.Title = "Index";
@@ -16,31 +16,43 @@
             Nazwa
         </th>
         <th>
-            Rozmiar
+            Operacje
         </th>
         <th></th>
     </tr>
 
-    @foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(".", "Index", new {id = directory.parentId})
+        </td>
+        <td>
+
+        </td>
+    </tr>
+
+    @foreach (var directory in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Login)
+                @Html.DisplayFor(modelItem => directory.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SignUpDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastPasswordChange)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.ActionLink("Edit", "Edit", new { id=directory.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id=directory.Id })
             </td>
         </tr>
+    }
+
+    @foreach (var file in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => file.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=file.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=file.Id })
+            @Html.ActionLink("Pobierz", "Download", new { id=file.Id })
+        </td>
+    </tr>
     }
 
 </table>
