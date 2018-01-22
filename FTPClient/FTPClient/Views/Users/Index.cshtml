@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FTPClient.Models.User>
+﻿@model IEnumerable<FTPClient.Models.Directory>
 
 @{
     ViewBag.Title = "Index";
@@ -13,16 +13,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Login)
+            Nazwa
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Password)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SignUpDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastPasswordChange)
+            Rozmiar
         </th>
         <th></th>
     </tr>
