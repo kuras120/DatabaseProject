@@ -18,6 +18,8 @@ namespace FTPClient.Controllers
         // GET: Users
         public ActionResult Index()
         {
+            ViewBag.userDirectories = db.Directories.ToList();
+            ViewBag.userFiles = db.Files.ToList();
             return View(db.Users.ToList());
         }
 
