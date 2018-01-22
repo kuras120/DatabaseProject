@@ -11,6 +11,7 @@
         <div class="col-md-6">
             @using (Html.BeginForm("Login", "Account"))
             {
+            @Html.AntiForgeryToken()
             @if(ViewBag.isLoginError)
             {
                 <div class="alert alert-danger">Niepoprawny login lub hasło</div>
@@ -43,6 +44,7 @@
         <div class="col-md-6">
             @using (Html.BeginForm("Signup", "Account"))
             {
+            @Html.AntiForgeryToken()
             @if(ViewBag.isSignupError)
             {
                 <div class="alert alert-danger">Taki użytkownik już istnieje</div>
