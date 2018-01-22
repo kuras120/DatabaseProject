@@ -12,7 +12,7 @@
             @using (Html.BeginForm("Login", "Account"))
             {
             @Html.AntiForgeryToken()
-            @if(ViewBag.isLoginError)
+            if(ViewBag.isLoginError)
             {
                 <div class="alert alert-danger">Niepoprawny login lub hasło</div>
             }
@@ -45,7 +45,7 @@
             @using (Html.BeginForm("Signup", "Account"))
             {
             @Html.AntiForgeryToken()
-            @if(ViewBag.isSignupError)
+            if(ViewBag.isSignupError)
             {
                 <div class="alert alert-danger">Taki użytkownik już istnieje</div>
             }

@@ -23,17 +23,20 @@
 
     <tr>
         <td>
-            @Html.ActionLink(".", "Index", new {id = directory.parentId})
+            @if(ViewBag.parentFolderId != 0)
+            {
+                @Html.ActionLink("folder wyżej", "Index", new {id = ViewBag.parentFolderId})
+            }
         </td>
         <td>
 
         </td>
     </tr>
 
-    @foreach (var directory in Model) {
+    @foreach (var directory in ViewBag.userDirectories) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => directory.Name)
+                @directory.Name
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=directory.Id }) |
@@ -42,14 +45,14 @@
         </tr>
     }
 
-    @foreach (var file in Model) {
+    @foreach (var file in ViewBag.userFiles) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => file.Name)
+            @file.Name
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=file.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=file.Id })
+            @Html.ActionLink("Delete", "Delete", new { id=file.Id }) |
             @Html.ActionLink("Pobierz", "Download", new { id=file.Id })
         </td>
     </tr>
