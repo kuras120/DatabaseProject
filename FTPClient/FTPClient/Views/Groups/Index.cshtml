@@ -19,7 +19,7 @@
 @foreach (var item in ViewBag.UserGroups) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            item.Name
         </td>
         <td>
             @Html.ActionLink("Details", "Details", new { id=item.Id })
