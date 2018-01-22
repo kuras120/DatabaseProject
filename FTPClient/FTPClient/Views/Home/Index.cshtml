@@ -1,37 +1,44 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "FTP Service";
 }
 
 <div class="jumbotron">
-    <h1>FTP Client</h1>
+    <h1>FTP Service</h1>
     <p class="lead">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est augue, varius non nunc vel, imperdiet luctus nulla.
-        Phasellus mollis, massa in euismod vulputate, dolor dui semper ex, vel condimentum justo justo vel lorem. 
-        Pellentesque pretium velit quis pulvinar facilisis. Fusce cursus dignissim congue. Duis varius aliquam nisi sollicitudin commodo.
+        Projekt realizowany w ramach przedmiotu Bazy Danych 2
     </p>
-    <p>
-        <a href="https://www.lipsum.com" class="btn btn-primary btn-lg">Learn more &raquo;</a>
-    </p>
-</div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>Lorem ipsum!</h2>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est augue, varius non nunc vel, imperdiet luctus nulla.
-            Phasellus mollis, massa in euismod vulputate, dolor dui semper ex, vel condimentum justo justo vel lorem. 
-            Pellentesque pretium velit quis pulvinar facilisis. Fusce cursus dignissim congue. Duis varius aliquam nisi sollicitudin commodo.
-        </p>
-        <p><a class="btn btn-default" href="https://www.lipsum.com">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Lorem ipsum!</h2>
-        <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est augue, varius non nunc vel, imperdiet luctus nulla.</p>
-        <p><a class="btn btn-default" href="https://www.lipsum.com">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Lorem ipsum!</h2>
-        <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent est augue, varius non nunc vel, imperdiet luctus nulla.</p>
-        <p><a class="btn btn-default" href="https://www.lipsum.com">Learn more &raquo;</a></p>
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("Login", "Account"))
+            {
+            @Html.TextBox("Name");
+            @Html.Password("Password");
+            <button type="submit" class="btn btn-default">Zaloguj</button>
+            }
+            
+            <form>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-user"></span>
+                    <input type="text" class="form-control" placeholder="Login">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                    <input type="password" class="form-control" placeholder="Hasło">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-user"></span>
+                    <input type="text" class="form-control" placeholder="Login">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-lock"></span>
+                    <input type="password" class="form-control" placeholder="Hasło">
+                </div>
+                <button type="submit" class="btn btn-default">Zarejestruj</button>
+            </form>
+        </div>
     </div>
 </div>
