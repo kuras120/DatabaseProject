@@ -11,6 +11,10 @@
         <div class="col-md-6">
             @using (Html.BeginForm("Login", "Account"))
             {
+            @if(ViewBag.isLoginError)
+            {
+                <div class="alert alert-danger">Niepoprawny login lub hasło</div>
+            }
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-user"></span>
                 @Html.TextBox("loginInput",
@@ -39,6 +43,10 @@
         <div class="col-md-6">
             @using (Html.BeginForm("Signup", "Account"))
             {
+            @if(ViewBag.isSignupError)
+            {
+                <div class="alert alert-danger">Taki użytkownik już istnieje</div>
+            }
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-user"></span>
                 @Html.TextBox("loginInput",

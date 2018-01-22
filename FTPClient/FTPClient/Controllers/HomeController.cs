@@ -11,6 +11,10 @@ namespace FTPClient.Controllers
         public ActionResult Index()
         {
             return View();
+            // If true, error message will be displayed
+            ViewBag.isLoginError = false;
+            // If true, error message will be displayed
+            ViewBag.isSignUpError = false;
         }
 
         public ActionResult About()
