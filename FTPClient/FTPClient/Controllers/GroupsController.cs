@@ -20,6 +20,7 @@ namespace FTPClient.Controllers
         {
             var groups = db.Groups.Include(g => g.Admin).Include(g => g.RootDirectory);
             ViewBag.CanCreateGroup = false;
+            ViewBag.userGroups = groups;
             return View(groups.ToList());
         }
 
