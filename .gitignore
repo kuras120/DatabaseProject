@@ -289,3 +289,6 @@ __pycache__/
 /FTPClient/FTPClient/Migrations
 /FTPClient/CodedUITestProject2
 /FTPClient/CodedUITestProject1
+*.csproj
+*.sln
+*.config

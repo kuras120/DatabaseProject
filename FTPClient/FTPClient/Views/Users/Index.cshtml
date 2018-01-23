@@ -1,16 +1,84 @@
-﻿@model IEnumerable<FTPClient.Models.User>
+﻿
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Dodaj nowy plik do aktualnego folderu</h3>
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm("AddFile", "Files", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="file" name="newFile" />
+                        </div>
+                    </div>
+                    <button class="btn btn-success">Wyślij</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <h3 class="panel-title">Twoje foldery</h3>
+                </div>
+                <!-- Table -->
+                <table class="table table-hover">
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Typ dostępu</th>
+                        <th>Uprawnienia</th>
+                        <th>Operacje</th>
+                    </tr>
+                    <tr>
+                        <td>Nazwafolderu</td>
+                        <td>Owner</td>
+                        <td>rwx</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id=5 }) |
+                            @Html.ActionLink("Delete", "Delete", new { id=5 })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <h3 class="panel-title">Twoje pliki</h3>
+                </div>
+                <table class="table table-hover">
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Rozmiar</th>
+                        <th>Typ dostępu</th>
+                        <th>Data dodatnia</th>
+                        <th>Uprawnienia</th>
+                        <th>Operacje</th>
+                    </tr>
+                    <tr>
+                        <td>Nazwafolderu</td>
+                        <td>5 kB</td>
+                        <td>Owner</td>
+                        <td>Dziś</td>
+                        <td>rwx</td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id=5 }) |
+                            @Html.ActionLink("Delete", "Delete", new { id=5 })
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-@{
-    ViewBag.Title = "Index";
-}
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-
-<table class="table">
+@*<table class="table">
     <tr>
         <th>
             Nazwa
@@ -58,7 +126,7 @@
     </tr>
     }
 
-</table>
+</table>*@
 
 <asp:CalendarExtender ID="ControlIDHere" runat="server" Enabled="True"
                       TargetControlID="TextBoxIDHere" PopupButtonID="CalenderImageIDHere" Format="MM/dd/yyyy">
