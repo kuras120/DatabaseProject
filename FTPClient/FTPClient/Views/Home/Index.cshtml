@@ -10,65 +10,83 @@
         Projekt realizowany w ramach przedmiotu Bazy Danych 2
     </p>
     <div class="row">
-        <div class="col-md-6">
-            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
-            {
-            @Html.AntiForgeryToken()
-            if(@ViewBag.isLoginError == true)
-            {
+        <div class="col-md-4 col-md-offset-1">
+            <div class="row">
+                @if(@ViewBag.isLoginError == true)
+                {
                 <div class="alert alert-danger">Niepoprawny login lub hasło</div>
-            }
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-user"></span>
-                @Html.TextBoxFor(a => a.Login,
-                    new {
-                    id = "login-input",
-                    @class = "form-control",
-                    @placeholder="Login"
-                })
+                }
             </div>
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-lock"></span>
-                @Html.PasswordFor(a => a.Password,
-                new {
-                id = "password-input",
-                @class = "form-control",
-                @placeholder="Hasło"
-                })
+            <div class="row well well-lg">
+                    @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+                    {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="login-login-input">Login</label>
+                            @Html.TextBoxFor(a => a.Login,
+                            new {
+                            id = "login-login-input",
+                            @class = "form-control",
+                            @placeholder="Login"
+                            })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="login-password-input">Hasło</label>
+                            @Html.PasswordFor(a => a.Password,
+                            new {
+                            id = "login-password-input",
+                            @class = "form-control",
+                            @placeholder="Hasło"
+                            })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-default">Zaloguj</button>
+                    }
             </div>
-            <button type="submit" class="btn btn-default">Zaloguj</button>
-            }
-
-          
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+                <div class="row">
+                    @if(@ViewBag.isSignupError == true)
+                    {
+                    <div class="alert alert-danger">Taki użytkownik już istnieje</div>
+                    }
+                </div>
+                <div class="row well well-lg">
+                    @using (Html.BeginForm("Signup", "Home", FormMethod.Post))
+                    {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="signup-login-input">Login</label>
+                            @Html.TextBoxFor(a => a.Login,
+                            new {
+                            id = "signup-login-input",
+                            @class = "form-control",
+                            @placeholder="Login"
+                            })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="signup-password-input">Login</label>
+                            @Html.PasswordFor(a => a.Password,
+                            new {
+                            id = "signup-password-input",
+                            @class = "form-control",
+                            @placeholder="Hasło"
+                            })
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-default">Zarejestruj</button>
+                        }
+                 </div>
             </div>
-        <div class="col-md-6">
-            @using (Html.BeginForm("Signup", "Home", FormMethod.Post))
-            {
-            @Html.AntiForgeryToken()
-            if(@ViewBag.isSignupError == true)
-            {
-                <div class="alert alert-danger">Taki użytkownik już istnieje</div>
-            }
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-user"></span>
-                @Html.TextBoxFor(a => a.Login,
-                new {
-                id = "login-input",
-                @class = "form-control",
-                @placeholder="Login"
-                })
-            </div>
-            <div class="input-group">
-                <span class="input-group-addon glyphicon glyphicon-lock"></span>
-                @Html.PasswordFor(a => a.Password,
-                new {
-                id = "password-input",
-                @class = "form-control",
-                @placeholder="Hasło"
-                })
-            </div>
-            <button type="submit" class="btn btn-default">Zarejestruj</button>
-            }
+        <div class="col-md-1">
         </div>
     </div>
 </div>
