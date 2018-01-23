@@ -20,7 +20,9 @@ namespace FTPClient.Controllers
             if (TempData.ContainsKey("signupErrorOccured"))
             {
                 ViewBag.isSignupError = TempData["signupErrorOccured"];
+                ViewBag.SignupErrorMessage = TempData["sigupErrorMessage"];
                 TempData.Remove("signupErrorOccured");
+                TempData.Remove("sigupErrorMessage");
             }
             return View();
         }
@@ -78,6 +80,7 @@ namespace FTPClient.Controllers
                 if(obj.Count() != 0)
                 {
                     TempData["signupErrorOccured"] = true;
+                    TempData["sigupErrorMessage"] = "Login jest już zajęty";
                     return RedirectToAction("Index");
 
                 }

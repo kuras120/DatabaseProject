@@ -53,7 +53,7 @@
                 <div class="row">
                     @if(@ViewBag.isSignupError == true)
                     {
-                    <div class="alert alert-danger">Taki użytkownik już istnieje</div>
+                    <div class="alert alert-danger">@ViewBag.SignupErrorMessage</div>
                     }
                 </div>
                 <div class="row well well-lg">
