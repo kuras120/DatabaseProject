@@ -21,14 +21,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Moje pliki", "Index", "Users")</li>
-                    <li>@Html.ActionLink("Grupy", "Index", "Groups")</li>
-                    <li>@Html.ActionLink("Foldery", "Index", "Directories")</li>
-                    <li>@Html.ActionLink("Pliki", "Index", "Files")</li>
-                    <li>@Html.ActionLink("DostepDoFolderow", "Index", "DirectoryAccesses")</li>
-                    <li>@Html.ActionLink("DostepDoPlikow", "Index", "FileAccesses")</li>
                     @if(Session["UserID"] != null)
                     {
+                    <li>@Html.ActionLink("Moje pliki", "Index", "Users")</li>
+                    <li>@Html.ActionLink("Grupy", "Index", "Groups")</li>
+
+                    @*<li>@Html.ActionLink("Foldery", "Index", "Directories")</li>
+                    <li>@Html.ActionLink("Pliki", "Index", "Files")</li>
+                    <li>@Html.ActionLink("DostepDoFolderow", "Index", "DirectoryAccesses")</li>
+                    <li>@Html.ActionLink("DostepDoPlikow", "Index", "FileAccesses")</li>*@
                     <li float="right">@Html.ActionLink("Wyloguj", "Logout", "Home")</li>
                     }
                 </ul>
