@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FTPClient.DAL;
+using FTPClient.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,25 +12,44 @@ namespace FTPClient.Controllers
     {
         public ActionResult Index()
         {
-            // If true, error message will be displayed
-            ViewBag.isLoginError = false;
-            // If true, error message will be displayed
-            ViewBag.isSignUpError = false;
+            if(TempData.ContainsKey("loginErrorOccured"))
+                ViewBag.isLoginError = TempData["loginErrorOccured"];
             return View();
         }
 
-        public ActionResult About()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(true)]
+        public ActionResult Login(User loginUser)
         {
-            ViewBag.Message = "Your application description page.";
+            if(ModelState.IsValid)
+            {
+                using (DataModel db = new DataModel())
+                {
+                    var obj = db.Users.Where(a => a.Login.Equals(loginUser.Login) && a.Password.Equals(loginUser.Password));
+                    if(obj.ToList().Count  != 0)
+                    {
+                        var foundUser = obj.First();
+                        Session["UserID"] = foundUser.Id;
+                        Session["UserLogin"] = foundUser.Login;
 
-            return View();
+                        return RedirectToAction("UserDashBoard");
+                    }
+                }
+            }
+            // If true, error message will be displayed
+            TempData["loginErrorOccured"] = true;
+            return RedirectToAction("Index");
         }
 
-        public ActionResult Contact()
+        public ActionResult UserDashBoard()
         {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            if (Session["UserID"] != null)
+            {
+                return RedirectToAction("UserDashboard", "Users");
+            }
+            else
+                return View("Index");
         }
     }
 }
