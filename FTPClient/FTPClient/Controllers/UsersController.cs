@@ -18,6 +18,9 @@ namespace FTPClient.Controllers
         // GET: Users
         public ActionResult Index()
         {
+            if (Session["UserID"] == null)
+               return RedirectToAction("Index", "Home");
+
             ViewBag.userDirectories = db.Directories.ToList();
             ViewBag.userFiles = db.Files.ToList();
             return View(db.Users.ToList());
@@ -130,12 +133,7 @@ namespace FTPClient.Controllers
 
         public ActionResult UserDashboard()
         {
-            if (Session["UserID"] == null)
-                RedirectToAction("Index", "Home");
-
-            ViewBag.userDirectories = db.Directories.ToList();
-            ViewBag.userFiles = db.Files.ToList();
-            return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }
