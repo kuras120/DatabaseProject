@@ -42,7 +42,7 @@
           
             </div>
         <div class="col-md-6">
-            @using (Html.BeginForm("Signup", "Account", FormMethod.Post))
+            @using (Html.BeginForm("Signup", "Home", FormMethod.Post))
             {
             @Html.AntiForgeryToken()
             if(@ViewBag.isSignupError == true)
@@ -51,8 +51,7 @@
             }
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-user"></span>
-                @Html.TextBox("loginInput",
-                null,
+                @Html.TextBoxFor(a => a.Login,
                 new {
                 id = "login-input",
                 @class = "form-control",
@@ -61,8 +60,7 @@
             </div>
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-lock"></span>
-                @Html.Password("passwordInput",
-                null,
+                @Html.PasswordFor(a => a.Password,
                 new {
                 id = "password-input",
                 @class = "form-control",

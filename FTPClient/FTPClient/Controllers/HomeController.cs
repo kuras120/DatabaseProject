@@ -13,7 +13,15 @@ namespace FTPClient.Controllers
         public ActionResult Index()
         {
             if(TempData.ContainsKey("loginErrorOccured"))
+            {
                 ViewBag.isLoginError = TempData["loginErrorOccured"];
+                TempData.Remove("loginErrorOccured");
+            }
+            if (TempData.ContainsKey("signupErrorOccured"))
+            {
+                ViewBag.isSignupError = TempData["signupErrorOccured"];
+                TempData.Remove("signupErrorOccured");
+            }
             return View();
         }
 
@@ -56,6 +64,29 @@ namespace FTPClient.Controllers
             }
             else
                 return View("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(true)]
+        public ActionResult Signup(User newUser)
+        {
+            using (var db = new DataModel())
+            {
+                var obj = db.Users.Where(a => a.Login.Equals(newUser.Login));
+
+                if(obj.Count() != 0)
+                {
+                    TempData["signupErrorOccured"] = true;
+                    return RedirectToAction("Index");
+
+                }
+                newUser.SignUpDate = DateTime.Now;
+                newUser.LastPasswordChange = DateTime.Now;
+                db.Users.Add(newUser);
+                db.SaveChanges();
+                return Login(newUser);
+            }
         }
     }
 }
