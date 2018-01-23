@@ -127,5 +127,15 @@ namespace FTPClient.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult UserDashboard()
+        {
+            if (Session["UserID"] == null)
+                RedirectToAction("Index", "Home");
+
+            ViewBag.userDirectories = db.Directories.ToList();
+            ViewBag.userFiles = db.Files.ToList();
+            return View("Index");
+        }
     }
 }

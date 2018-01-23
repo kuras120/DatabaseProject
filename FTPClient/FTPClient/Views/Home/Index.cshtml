@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FTPClient.Models.User
+
+@{
     ViewBag.Title = "FTP Service";
 }
 
@@ -9,27 +11,25 @@
     </p>
     <div class="row">
         <div class="col-md-6">
-            @using (Html.BeginForm("Login", "Account"))
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
             {
             @Html.AntiForgeryToken()
-            if(ViewBag.isLoginError)
+            if(@ViewBag.isLoginError == true)
             {
                 <div class="alert alert-danger">Niepoprawny login lub hasło</div>
             }
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-user"></span>
-                @Html.TextBox("loginInput",
-                null,
-                new {
-                id = "login-input",
-                @class = "form-control",
-                @placeholder="Login"
+                @Html.TextBoxFor(a => a.Login,
+                    new {
+                    id = "login-input",
+                    @class = "form-control",
+                    @placeholder="Login"
                 })
             </div>
             <div class="input-group">
                 <span class="input-group-addon glyphicon glyphicon-lock"></span>
-                @Html.Password("passwordInput",
-                null,
+                @Html.PasswordFor(a => a.Password,
                 new {
                 id = "password-input",
                 @class = "form-control",
@@ -42,10 +42,10 @@
           
             </div>
         <div class="col-md-6">
-            @using (Html.BeginForm("Signup", "Account"))
+            @using (Html.BeginForm("Signup", "Account", FormMethod.Post))
             {
             @Html.AntiForgeryToken()
-            if(ViewBag.isSignupError)
+            if(@ViewBag.isSignupError == true)
             {
                 <div class="alert alert-danger">Taki użytkownik już istnieje</div>
             }
