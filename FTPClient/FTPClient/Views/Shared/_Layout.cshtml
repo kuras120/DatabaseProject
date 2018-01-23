@@ -27,6 +27,10 @@
                     <li>@Html.ActionLink("Pliki", "Index", "Files")</li>
                     <li>@Html.ActionLink("DostepDoFolderow", "Index", "DirectoryAccesses")</li>
                     <li>@Html.ActionLink("DostepDoPlikow", "Index", "FileAccesses")</li>
+                    @if(Session["UserID"] != null)
+                    {
+                    <li float="right">@Html.ActionLink("Wyloguj", "Logout", "Home")</li>
+                    }
                 </ul>
             </div>
         </div>

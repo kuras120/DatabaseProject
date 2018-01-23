@@ -42,6 +42,12 @@ namespace FTPClient.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Logout()
+        {
+            Session.Abandon();
+            return RedirectToAction("Index");
+        }
+
         public ActionResult UserDashBoard()
         {
             if (Session["UserID"] != null)
