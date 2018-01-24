@@ -43,13 +43,14 @@ namespace FTPClient.Controllers
                 var probablyGoodUser = context.Users.Where(a => a.Login.Equals(loginUser.Login)).FirstOrDefault();
                 if (probablyGoodUser != null)
                 {
-                    string salt = loginUser.Login + loginUser.SignUpDate;
                     HashAlgorithm algorithm = SHA256.Create();
-                    Hash hash = new Hash(algorithm, salt, loginUser.Password);
-                    string hashedPassword = hash.String();
-                    algorithm.Clear();
+                    String salt = loginUser.Login + loginUser.SignUpDate;
                     System.Diagnostics.Debug.WriteLine("Sol przy logowaniu");
                     System.Diagnostics.Debug.WriteLine(salt);
+                    Hash hash = new Hash(algorithm, salt, loginUser.Password);
+                    var hashedPassword = hash.String();
+                    algorithm.Clear();
+
                     if (probablyGoodUser.Password == hashedPassword)
                     {
                         Session["UserID"] = probablyGoodUser.Id;
@@ -102,7 +103,7 @@ namespace FTPClient.Controllers
                     {
                         newUser.SignUpDate = DateTime.Now;
                         newUser.LastPasswordChange = DateTime.Now;
-
+                        
                         HashAlgorithm algorithm = SHA256.Create();
                         String salt = newUser.Login + newUser.SignUpDate;
                         System.Diagnostics.Debug.WriteLine("Sol przy rejestracji");
