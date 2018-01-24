@@ -43,8 +43,10 @@
                     <div class="form-group">
                         <div class="input-group">
                             <label for="newDirectory-name-input">Nazwa folderu</label>
-                            <input type="text" name="newDirectoryName" id="newDirectory-name-input" class="form-control"/>
-                            <input type="hidden" name="fileFolderID" value="@ViewBag.CurrentDirectoryID" />
+                            <input type="text" name="directoryName" id="newDirectory-name-input" class="form-control"/>
+                            <input type="hidden" name="upperDirId" value="@ViewBag.CurrentDirectoryID" />
+                            <input type="hidden" name="accessType" value="1" />
+                            <input type="hidden" name="permission" value="7" />
                         </div>
                     </div>
                     <button class="btn btn-success">Wyślij</button>
