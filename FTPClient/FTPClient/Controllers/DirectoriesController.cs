@@ -141,7 +141,10 @@ namespace FTPClient.Controllers
 
             Directory dir = new Directory();
             dir.Name = directoryName;
-            dir.ParentDirectoryId = upperDirId;
+            if (upperDirId == 0)
+                dir.ParentDirectoryId = null;
+            else
+                dir.ParentDirectoryId = upperDirId;
             db.Directories.Add(dir);
             DirectoryAccess dirAccess = new DirectoryAccess();
             dirAccess.AccessType = accessType;

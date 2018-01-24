@@ -124,7 +124,7 @@ namespace FTPClient.Controllers
                 return View("Index");
         }
 
-        public ActionResult About()
+        public ActionResult Signup(User newUser)
         {
                 var obj = context.Users.Where(a => a.Login.Equals(newUser.Login));
 
