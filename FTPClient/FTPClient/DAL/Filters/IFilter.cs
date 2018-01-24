@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FTPClient.DAL.Services
+namespace FTPClient.DAL.Filters
 {
-    interface IResponse<T>
+    interface IFilter
     {
-        T GetEntity(int id);
-        List<T> GetEntities();
+
     }
 }

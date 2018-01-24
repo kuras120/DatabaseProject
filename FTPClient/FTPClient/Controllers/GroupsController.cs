@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FTPClient.DAL;
+using FTPClient.DAL.Services.Request;
+using FTPClient.DAL.Services.Response;
 using FTPClient.Models;
 
 namespace FTPClient.Controllers
@@ -43,7 +45,6 @@ namespace FTPClient.Controllers
         public ActionResult Create()
         {
             ViewBag.AdminId = new SelectList(db.Users, "Id", "Login");
-            ViewBag.RootDirectoryId = new SelectList(db.Directories, "Id", "Name");
             return View();
         }
 
@@ -52,17 +53,48 @@ namespace FTPClient.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,AdminId,RootDirectoryId,Name")] Group group)
+        public ActionResult Create([Bind(Include = "Id,AdminId,Name")] Group group)
         {
             if (ModelState.IsValid)
             {
-                db.Groups.Add(group);
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        Directory dir = new Directory() {Name = group.Name + "Root", ParentDirectoryId = 1};
+                        db.Directories.Add(dir);
+
+                        group.RootDirectory = dir;
+
+                        db.Groups.Add(group);
+
+                        DirectoryAccess dirAccess =
+                            new DirectoryAccess()
+                            {
+                                UserId = group.AdminId,
+                                Directory = dir,
+                                AccessType = 7,
+                                Permissions = 7
+                            };
+                        db.DirectoryAccesses.Add(dirAccess);
+                        db.SaveChanges();
+
+                        transaction.Commit();
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                    }
+                }
+                
+                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             ViewBag.AdminId = new SelectList(db.Users, "Id", "Login", group.AdminId);
-            ViewBag.RootDirectoryId = new SelectList(db.Directories, "Id", "Name", group.RootDirectoryId);
             return View(group);
         }
 
@@ -114,6 +146,11 @@ namespace FTPClient.Controllers
                 return HttpNotFound();
             }
             return View(group);
+        }
+
+        public ActionResult Leave()
+        {
+            return View("Index");
         }
 
         // POST: Groups/Delete/5

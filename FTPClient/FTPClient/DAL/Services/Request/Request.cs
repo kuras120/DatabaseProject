@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web;
 using FTPClient.DAL.Services;
@@ -24,7 +25,9 @@ namespace FTPClient.DAL.Services.Request
 
         public void EditEntity(T entity)
         {
-            context.Set<T>().Attach(entity);
+            var tempEntity = context.Set<T>().Find(entity.Id);
+            context.Entry(tempEntity).CurrentValues.SetValues(entity);
+            context.SaveChanges();
         }
 
         public void DeleteEntity(T entity)
