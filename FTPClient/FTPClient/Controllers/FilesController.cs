@@ -144,7 +144,7 @@ namespace FTPClient.Controllers
         }
 
         // POST: Files/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
@@ -200,6 +200,43 @@ namespace FTPClient.Controllers
             db.SaveChanges();
 
             TempData["targetDirId"] = fileFolderID;
+
+            return RedirectToAction("goToDirectory", "Directories");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangeName(int fileId, string newName)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Index", "Home");
+
+            var file = db.Files.Where(f => f.Id == fileId).FirstOrDefault();
+            file.Name = newName;
+            TempData["targetDirId"] = file.DirectoryId;
+
+            db.SaveChanges();
+            return RedirectToAction("goToDirectory", "Directories");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int fileId)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Index", "Home");
+
+            // Here should be check if that user can delete this file
+
+            var file = db.Files.Where(f => f.Id == fileId).FirstOrDefault();
+            var fileAccess = db.FileAccesses.Where(fa => fa.FileId == fileId);
+
+            TempData["targetDirId"] = file.DirectoryId;
+
+            db.Files.Remove(file);
+            db.FileAccesses.RemoveRange(fileAccess);
+
+            db.SaveChanges();
 
             return RedirectToAction("goToDirectory", "Directories");
         }
