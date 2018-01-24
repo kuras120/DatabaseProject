@@ -151,7 +151,25 @@ namespace FTPClient.Controllers
             db.DirectoryAccesses.Add(dirAccess);
 
             db.SaveChanges();
+            return goToDirectory(upperDirId);// RedirectToAction("Index", "Users",);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult goToDirectory(int dirId)
+        {
+            if (Session["UserID"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            TempData["currentDirectoryID"] = dirId;
             return RedirectToAction("Index", "Users");
+        }
+
+        public ActionResult goToDirectory()
+        {
+            return goToDirectory((int)TempData["targetDirId"]);
         }
     }
 }
