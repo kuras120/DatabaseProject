@@ -1,6 +1,6 @@
 ﻿
 <div class="row" style="margin-top:20px;">
-    <div class="col-md-4" style="padding-right:40px;">
+    <div class="col-md-3" style="padding-right:40px;">
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -21,6 +21,7 @@
                     <div class="form-group">
                         <div class="input-group">
                             <input type="file" name="file" />
+                            <p class="help-block">Plik zachowa swoją nazwę!</p>
                             <input type="hidden" name="fileFolderID" value="@ViewBag.CurrentDirectoryID" />
                             <input type="hidden" name="accessType" value="1" />
                             <input type="hidden" name="permission" value="7" />
@@ -55,7 +56,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="row">
             <div class="panel panel-default">
                 <!-- Default panel contents -->
@@ -185,8 +186,29 @@
                                 }
                             </td>
                             <td>
-                                @Html.ActionLink("Zmień nazwę", "Edit","Files",null, new { id=fileStruct.file.Id }) |
-                                @Html.ActionLink("Usuń", "Delete", "Files",null,new { id=fileStruct.file.Id })
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @using (Html.BeginForm("ChangeName", "Files", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken();    
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control input-sm" placeholder="@fileStruct.file.Name" name="newName">
+                                                        <span class="input-group-btn">
+                                                            <button type="submit" class="btn btn-primary btn-sm">Zmień nazwę</button>
+                                                        </span>
+                                                    </div><!-- /input-group -->
+                                            <input type="hidden" name="fileId" value="@fileStruct.file.Id" />
+                                        }
+                                    </div>
+                                    <div class="col-md-6">
+                                        @using (Html.BeginForm("Delete", "Files", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken();
+                                            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                                            <input type="hidden" name="fileId" value="@fileStruct.file.Id" />
+                                        }
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     }
