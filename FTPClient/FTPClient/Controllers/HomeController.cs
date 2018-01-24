@@ -129,16 +129,22 @@ namespace FTPClient.Controllers
         [ValidateInput(true)]
         public ActionResult Signup(User newUser)
         {
-                var obj = context.Users.Where(a => a.Login.Equals(newUser.Login));
+            var obj = context.Users.Where(a => a.Login.Equals(newUser.Login));
 
-                if (obj.Count() != 0)
-                {
-                    TempData["signupErrorOccured"] = true;
-                    TempData["sigupErrorMessage"] = "Login jest już zajęty";
-                    return RedirectToAction("Index");
+            if (obj.Count() != 0)
+            {
+                TempData["signupErrorOccured"] = true;
+                TempData["sigupErrorMessage"] = "Login jest już zajęty";
+                return RedirectToAction("Index");
 
-                }
+            }
 
+            if (String.IsNullOrWhiteSpace(newUser.Password) || String.IsNullOrWhiteSpace(newUser.Login))
+            {
+                TempData["signupErrorOccured"] = true;
+                TempData["sigupErrorMessage"] = "Uzupełnij wszystkie pola";
+                return RedirectToAction("Index");
+            }
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     try
@@ -158,12 +164,15 @@ namespace FTPClient.Controllers
 
                         Directory newUserDirectory = new Directory();
                         newUserDirectory.Name = newUser.Login;
+                        context.Directories.Add(newUserDirectory);
 
                         DirectoryAccess access = new DirectoryAccess();
                         access.Directory = newUserDirectory;
                         access.User = newUser;
                         access.AccessType = 1;
                         access.Permissions = 7;
+                        context.DirectoryAccesses.Add(access);
+
                         context.SaveChanges();
                         transaction.Commit();
 

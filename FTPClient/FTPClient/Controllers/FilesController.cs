@@ -4,11 +4,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using FTPClient.DAL;
 using FTPClient.DAL.Services.Request;
 using FTPClient.Models;
+using FTPClient.Utilities;
 
 namespace FTPClient.Controllers
 {
@@ -181,12 +184,22 @@ namespace FTPClient.Controllers
             var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads"), fileName);
             file.SaveAs(path);
 
-            File addedFile = new Models.File();
+            File addedFile = new File();
             addedFile.DirectoryId = fileFolderID;
-            addedFile.Name = fileName;
-            addedFile.Path = path;
             addedFile.Size = 17; // determine that later
             addedFile.UploadTime = DateTime.Now;
+            addedFile.Name = fileName;
+
+            HashAlgorithm algorithm = SHA256.Create();
+            string salt = ((int)Session["UserID"]).ToString() + addedFile.UploadTime;
+            Hash hash = new Hash(algorithm, salt, fileName);
+            var hashedName = hash.String();
+            algorithm.Clear();
+
+            string clean = Regex.Replace(hashedName, "\\u005c<[^>]+/\\u0027.()#$*@!:;?>", string.Empty);
+
+            System.Diagnostics.Debug.WriteLine("Sciezka do pliku");
+            System.Diagnostics.Debug.WriteLine(path);
 
             db.Files.Add(addedFile);
 
