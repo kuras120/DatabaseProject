@@ -164,6 +164,10 @@ namespace FTPClient.Controllers
                         access.User = newUser;
                         access.AccessType = 1;
                         access.Permissions = 7;
+
+                        context.Directories.Add(newUserDirectory);
+                        context.DirectoryAccesses.Add(access);
+                        
                         context.SaveChanges();
                         transaction.Commit();
 
