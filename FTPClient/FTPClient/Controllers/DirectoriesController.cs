@@ -129,5 +129,29 @@ namespace FTPClient.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddDirectory(string directoryName, int upperDirId, int accessType, int permission)
+        {
+            if (Session["UserID"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            Directory dir = new Directory();
+            dir.Name = directoryName;
+            dir.ParentDirectoryId = upperDirId;
+            db.Directories.Add(dir);
+            DirectoryAccess dirAccess = new DirectoryAccess();
+            dirAccess.AccessType = accessType;
+            dirAccess.Permissions = permission;
+            dirAccess.UserId = (int)Session["UserID"];
+            dirAccess.DirectoryId = dir.Id;
+            db.DirectoryAccesses.Add(dirAccess);
+
+            db.SaveChanges();
+            return RedirectToAction("Index", "Users");
+        }
     }
 }

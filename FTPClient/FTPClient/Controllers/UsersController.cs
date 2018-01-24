@@ -55,15 +55,18 @@ namespace FTPClient.Controllers
             }
 
             ViewBag.CurrentDirectoryID = currDirId;
-            var dirAccesses = db.DirectoryAccesses.Where(da => da.DirectoryId == currDirId && da.UserId == userID);           
+            var dirAccesses = db.DirectoryAccesses.Where(da => da.UserId == userID && da.AccessType == 1);           
             foreach(var dirAccess in dirAccesses)
             {
-                var dir = db.Directories.Where(a => a.Id == dirAccess.DirectoryId).FirstOrDefault();
+                var dir = db.Directories.Where(a => a.Id == dirAccess.DirectoryId && a.ParentDirectoryId==currDirId).FirstOrDefault();
 
-                DirData newData = new DirData();
-                newData.dir = dir;
-                newData.dirAccess = dirAccess;
-                dirList.Add(newData);
+                if(dir != null)
+                {
+                    DirData newData = new DirData();
+                    newData.dir = dir;
+                    newData.dirAccess = dirAccess;
+                    dirList.Add(newData);
+                }
             }
 
             ViewBag.userDirectories = dirList;
