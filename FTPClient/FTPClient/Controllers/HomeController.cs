@@ -3,13 +3,19 @@ using FTPClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using FTPClient.Utilities;
+using Microsoft.Ajax.Utilities;
 
 namespace FTPClient.Controllers
 {
     public class HomeController : Controller
     {
+        DataModel context = new DataModel();
+
         public ActionResult Index()
         {
             if(TempData.ContainsKey("loginErrorOccured"))
@@ -34,18 +40,25 @@ namespace FTPClient.Controllers
         {
             if(ModelState.IsValid)
             {
-                using (DataModel db = new DataModel())
+                var probablyGoodUser = context.Users.Where(a => a.Login.Equals(loginUser.Login)).FirstOrDefault();
+                if (probablyGoodUser != null)
                 {
-                    var obj = db.Users.Where(a => a.Login.Equals(loginUser.Login) && a.Password.Equals(loginUser.Password));
-                    if(obj.ToList().Count  != 0)
+                    string salt = loginUser.Login + loginUser.SignUpDate;
+                    HashAlgorithm algorithm = SHA256.Create();
+                    Hash hash = new Hash(algorithm, salt, loginUser.Password);
+                    string hashedPassword = hash.String();
+                    algorithm.Clear();
+                    System.Diagnostics.Debug.WriteLine("Sol przy logowaniu");
+                    System.Diagnostics.Debug.WriteLine(salt);
+                    if (probablyGoodUser.Password == hashedPassword)
                     {
-                        var foundUser = obj.First();
-                        Session["UserID"] = foundUser.Id;
-                        Session["UserLogin"] = foundUser.Login;
+                        Session["UserID"] = probablyGoodUser.Id;
+                        Session["UserLogin"] = probablyGoodUser.Login;
 
                         return RedirectToAction("UserDashBoard");
                     }
                 }
+
             }
             // If true, error message will be displayed
             TempData["loginErrorOccured"] = true;
@@ -73,23 +86,55 @@ namespace FTPClient.Controllers
         [ValidateInput(true)]
         public ActionResult Signup(User newUser)
         {
-            using (var db = new DataModel())
-            {
-                var obj = db.Users.Where(a => a.Login.Equals(newUser.Login));
+                var obj = context.Users.Where(a => a.Login.Equals(newUser.Login));
 
-                if(obj.Count() != 0)
+                if (obj.Count() != 0)
                 {
                     TempData["signupErrorOccured"] = true;
                     TempData["sigupErrorMessage"] = "Login jest już zajęty";
                     return RedirectToAction("Index");
 
                 }
-                newUser.SignUpDate = DateTime.Now;
-                newUser.LastPasswordChange = DateTime.Now;
-                db.Users.Add(newUser);
-                db.SaveChanges();
-                return Login(newUser);
-            }
+
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        newUser.SignUpDate = DateTime.Now;
+                        newUser.LastPasswordChange = DateTime.Now;
+
+                        HashAlgorithm algorithm = SHA256.Create();
+                        String salt = newUser.Login + newUser.SignUpDate;
+                        System.Diagnostics.Debug.WriteLine("Sol przy rejestracji");
+                        System.Diagnostics.Debug.WriteLine(salt);
+                        Hash hash = new Hash(algorithm, salt, newUser.Password);
+                        newUser.Password = hash.String();
+                        algorithm.Clear();
+
+                        context.Users.Add(newUser);
+
+                        Directory newUserDirectory = new Directory();
+                        newUserDirectory.Name = newUser.Login;
+
+                        DirectoryAccess access = new DirectoryAccess();
+                        access.Directory = newUserDirectory;
+                        access.User = newUser;
+                        access.AccessType = 1;
+                        access.Permissions = 7;
+                        context.SaveChanges();
+                        transaction.Commit();
+                        return Login(newUser);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        TempData["signupErrorOccured"] = true;
+                        TempData["sigupErrorMessage"] = "Serwer nie odpowiada";
+                        transaction.Rollback();
+                        return RedirectToAction("Index");
+                    }
+
+                }
         }
     }
 }

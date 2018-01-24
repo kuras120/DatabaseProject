@@ -23,11 +23,11 @@
         </td>
         <td>
             @Html.ActionLink("Details", "Details", new { id=item.Id })
-            @if(item.canDelete)
+            if(item.canDelete)
             {
                 @Html.ActionLink("Usuń", "Delete", new { id=item.Id })
             }
-            @if(item.canLeave)
+            if(item.canLeave)
             {
                 @Html.ActionLink("Opuść", "Leave", new { id=item.Id }) 
             }

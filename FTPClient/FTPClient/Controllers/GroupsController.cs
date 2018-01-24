@@ -148,6 +148,11 @@ namespace FTPClient.Controllers
             return View(group);
         }
 
+        public ActionResult Leave()
+        {
+            return View("Index");
+        }
+
         // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
