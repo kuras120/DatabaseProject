@@ -170,6 +170,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hash.cs" />
     <Compile Include="Migrations\201712141108576_Test.cs" />
     <Compile Include="Migrations\201712141108576_Test.Designer.cs">
       <DependentUpon>201712141108576_Test.cs</DependentUpon>

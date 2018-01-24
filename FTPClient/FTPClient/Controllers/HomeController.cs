@@ -43,13 +43,28 @@ namespace FTPClient.Controllers
                 var probablyGoodUser = context.Users.Where(a => a.Login.Equals(loginUser.Login)).FirstOrDefault();
                 if (probablyGoodUser != null)
                 {
+                    System.Diagnostics.Debug.WriteLine("Prawdopodobny login");
+                    System.Diagnostics.Debug.WriteLine(loginUser.Login);
+                    System.Diagnostics.Debug.WriteLine("Prawdopodobne haslo");
+                    System.Diagnostics.Debug.WriteLine(loginUser.Password);
+
+                    System.Diagnostics.Debug.WriteLine("login");
+                    System.Diagnostics.Debug.WriteLine(probablyGoodUser.Login);
+                    System.Diagnostics.Debug.WriteLine("haslo");
+                    System.Diagnostics.Debug.WriteLine(probablyGoodUser.Password);
+
                     HashAlgorithm algorithm = SHA256.Create();
-                    String salt = loginUser.Login + loginUser.SignUpDate;
+                    String salt = loginUser.Login + probablyGoodUser.SignUpDate;
                     System.Diagnostics.Debug.WriteLine("Sol przy logowaniu");
                     System.Diagnostics.Debug.WriteLine(salt);
                     Hash hash = new Hash(algorithm, salt, loginUser.Password);
                     var hashedPassword = hash.String();
                     algorithm.Clear();
+
+                    System.Diagnostics.Debug.WriteLine("zahaszowane");
+                    System.Diagnostics.Debug.WriteLine(hashedPassword);
+                    System.Diagnostics.Debug.WriteLine("stare haslo");
+                    System.Diagnostics.Debug.WriteLine(probablyGoodUser.Password);
 
                     if (probablyGoodUser.Password == hashedPassword)
                     {
@@ -58,6 +73,33 @@ namespace FTPClient.Controllers
 
                         return RedirectToAction("UserDashBoard");
                     }
+                }
+
+            }
+            // If true, error message will be displayed
+            TempData["loginErrorOccured"] = true;
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(true)]
+        public ActionResult LoginFromRegister(User loginUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var probablyGoodUser = context.Users.Where(a => a.Login.Equals(loginUser.Login)).FirstOrDefault();
+                if (probablyGoodUser != null)
+                {
+                    if (probablyGoodUser.Login == loginUser.Login && probablyGoodUser.Password == loginUser.Password)
+                    {
+
+                        Session["UserID"] = probablyGoodUser.Id;
+                        Session["UserLogin"] = probablyGoodUser.Login;
+
+                        return RedirectToAction("UserDashBoard");
+                    }
+
                 }
 
             }
@@ -124,7 +166,8 @@ namespace FTPClient.Controllers
                         access.Permissions = 7;
                         context.SaveChanges();
                         transaction.Commit();
-                        return Login(newUser);
+
+                        return LoginFromRegister(newUser);
                     }
                     catch (Exception ex)
                     {
