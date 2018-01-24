@@ -181,14 +181,7 @@ namespace FTPClient.Controllers
             }
 
             var fileName = System.IO.Path.GetFileName(file.FileName);
-            var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads"), fileName);
-            file.SaveAs(path);
-
             File addedFile = new File();
-            addedFile.DirectoryId = fileFolderID;
-            addedFile.Size = 17; // determine that later
-            addedFile.UploadTime = DateTime.Now;
-            addedFile.Name = fileName;
 
             HashAlgorithm algorithm = SHA256.Create();
             string salt = ((int)Session["UserID"]).ToString() + addedFile.UploadTime;
@@ -196,7 +189,25 @@ namespace FTPClient.Controllers
             var hashedName = hash.String();
             algorithm.Clear();
 
-            string clean = Regex.Replace(hashedName, "\\u005c<[^>]+/\\u0027.()#$*@!:;?>", string.Empty);
+
+            
+            string invalidChars = System.Text.RegularExpressions.Regex.Escape(new string(System.IO.Path.GetInvalidFileNameChars()));
+            string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+            string clean = System.Text.RegularExpressions.Regex.Replace(hashedName, invalidRegStr, "_");
+            
+
+
+            ///string clean = Regex.Replace(hashedName, "\\<[^>]+/\'.()#$*@!:;?>", string.Empty);
+            var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads"), clean);
+            file.SaveAs(path);
+
+            addedFile.DirectoryId = fileFolderID;
+            addedFile.Size = 17; // determine that later
+            addedFile.UploadTime = DateTime.Now;
+            addedFile.Name = fileName;
+            addedFile.Path = path;
+
 
             System.Diagnostics.Debug.WriteLine("Sciezka do pliku");
             System.Diagnostics.Debug.WriteLine(path);
