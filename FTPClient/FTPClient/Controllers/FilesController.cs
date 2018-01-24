@@ -180,23 +180,24 @@ namespace FTPClient.Controllers
                 return RedirectToAction("Index", "Users");
             }
 
-            var fileName = System.IO.Path.GetFileName(file.FileName);
-            var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads"), fileName);
-            file.SaveAs(path);
-
             File addedFile = new File();
             addedFile.DirectoryId = fileFolderID;
             addedFile.Size = 17; // determine that later
             addedFile.UploadTime = DateTime.Now;
+            var fileName = System.IO.Path.GetFileName(file.FileName);
             addedFile.Name = fileName;
-
+            
             HashAlgorithm algorithm = SHA256.Create();
             string salt = ((int)Session["UserID"]).ToString() + addedFile.UploadTime;
             Hash hash = new Hash(algorithm, salt, fileName);
             var hashedName = hash.String();
             algorithm.Clear();
 
-            string clean = Regex.Replace(hashedName, "\\u005c<[^>]+/\\u0027.()#$*@!:;?>", string.Empty);
+
+            string clean = Regex.Replace(hashedName, "\\<[^>]+/\'.()#$*@!:;?>", string.Empty);
+            
+            var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads/"), clean);
+            file.SaveAs(path);
 
             System.Diagnostics.Debug.WriteLine("Sciezka do pliku");
             System.Diagnostics.Debug.WriteLine(path);
