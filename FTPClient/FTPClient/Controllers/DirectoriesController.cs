@@ -96,22 +96,22 @@ namespace FTPClient.Controllers
         }
 
         // GET: Directories/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Directory directory = db.Directories.Find(id);
-            if (directory == null)
-            {
-                return HttpNotFound();
-            }
-            return View(directory);
-        }
+        //public ActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Directory directory = db.Directories.Find(id);
+        //    if (directory == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(directory);
+        //}
 
         // POST: Directories/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
@@ -170,6 +170,57 @@ namespace FTPClient.Controllers
         public ActionResult goToDirectory()
         {
             return goToDirectory((int)TempData["targetDirId"]);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangeName(int dirId, string newName)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Index", "Home");
+
+            var dir = db.Directories.Where(f => f.Id == dirId).FirstOrDefault();
+            dir.Name = newName;
+            TempData["targetDirId"] = dir.ParentDirectoryId;
+
+            db.SaveChanges();
+            return RedirectToAction("goToDirectory", "Directories");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int dirId)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Index", "Home");
+
+            // Here should be check if that user can delete this directory
+            var subDirs = db.Directories.Where(d => d.ParentDirectoryId == dirId).ToList();
+            foreach(var subDir in subDirs)
+            {
+                Delete(subDir.Id);
+            }
+
+            // Here should be check if that user can delete this file
+            var files = db.Files.Where(f => f.DirectoryId == dirId);
+            foreach(var file in files)
+            {
+                var fileAccess = db.FileAccesses.Where(fa => fa.FileId == file.Id);
+                db.FileAccesses.RemoveRange(fileAccess);
+            }
+            db.Files.RemoveRange(files);
+
+            var dir = db.Directories.Where(f => f.Id == dirId).FirstOrDefault();
+            var dirAccess = db.DirectoryAccesses.Where(fa => fa.DirectoryId == dirId);
+
+            TempData["targetDirId"] = dir.ParentDirectoryId;
+
+            db.Directories.Remove(dir);
+            db.DirectoryAccesses.RemoveRange(dirAccess);
+
+            db.SaveChanges();
+
+            return RedirectToAction("goToDirectory", "Directories");
         }
     }
 }

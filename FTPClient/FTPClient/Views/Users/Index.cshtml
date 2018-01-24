@@ -129,8 +129,29 @@
                             }
                         </td>
                         <td>
-                            @Html.ActionLink("Zmień nazwę", "Edit", "Directories",null, new { id=directory.dir.Id }) |
-                            @Html.ActionLink("Usuń", "Delete", "Directories",null, new { id=directory.dir.Id })
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @using (Html.BeginForm("ChangeName", "Directories", FormMethod.Post))
+                                    {
+                                    @Html.AntiForgeryToken();
+                                    <div class="input-group">
+                                        <input type="text" class="form-control input-sm" placeholder="@directory.dir.Name" name="newName">
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary btn-sm">Zmień nazwę</button>
+                                        </span>
+                                    </div><!-- /input-group -->
+                                    <input type="hidden" name="dirId" value="@directory.dir.Id" />
+                                    }
+                                </div>
+                                <div class="col-md-2">
+                                    @using (Html.BeginForm("Delete", "Directories", FormMethod.Post))
+                                    {
+                                    @Html.AntiForgeryToken();
+                                    <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                                    <input type="hidden" name="dirId" value="@directory.dir.Id" />
+                                    }
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     }
@@ -200,7 +221,7 @@
                                             <input type="hidden" name="fileId" value="@fileStruct.file.Id" />
                                         }
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         @using (Html.BeginForm("Delete", "Files", FormMethod.Post))
                                         {
                                             @Html.AntiForgeryToken();
