@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title — moja aplikacja platformy ASP.NET</title>
+    <title>FTP Service - Projekt na Bazy danych  2</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -21,10 +21,18 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @using FTPClient.Models;
                     @if(Session["UserID"] != null)
                     {
                     <li>@Html.ActionLink("Moje pliki", "Index", "Users")</li>
-                    <li>@Html.ActionLink("Grupy", "Index", "Groups")</li>
+
+                    if(Session["UserGroups"] != null)
+                    {   
+                        foreach(var group in Session["UserGroups"] as List<Group>)
+                        {
+                            <li>@Html.ActionLink(group.Name, "Index", "Groups", new {Id = group.Id}, null)</li>
+                        }
+                    }
 
                     @*<li>@Html.ActionLink("Foldery", "Index", "Directories")</li>
                     <li>@Html.ActionLink("Pliki", "Index", "Files")</li>
