@@ -124,10 +124,7 @@ namespace FTPClient.Controllers
                 return View("Index");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [ValidateInput(true)]
-        public ActionResult Signup(User newUser)
+        public ActionResult About()
         {
                 var obj = context.Users.Where(a => a.Login.Equals(newUser.Login));
 
