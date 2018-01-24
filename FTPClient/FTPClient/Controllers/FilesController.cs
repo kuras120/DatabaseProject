@@ -162,5 +162,44 @@ namespace FTPClient.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddFile(HttpPostedFileBase file, int fileFolderID, int accessType, int permission)
+        {
+            if (Session["UserID"] == null)
+                return RedirectToAction("Index", "Home");
+
+            if(file == null || file.ContentLength == 0)
+            {
+                TempData["FileUploadErrorOccured"] = true;
+                TempData["FileUploadErrorMessage"] = "Nie udało się przekazać pliku";
+                return RedirectToAction("Index", "Users");
+            }
+
+            var fileName = System.IO.Path.GetFileName(file.FileName);
+            var path = System.IO.Path.Combine(Server.MapPath("~/App_Data/uploads"), fileName);
+            file.SaveAs(path);
+
+            File addedFile = new Models.File();
+            addedFile.DirectoryId = fileFolderID;
+            addedFile.Name = fileName;
+            addedFile.Path = path;
+            addedFile.Size = 17; // determine that later
+            addedFile.UploadTime = DateTime.Now;
+
+            db.Files.Add(addedFile);
+
+            FileAccess addedFileAccess = new FileAccess();
+            addedFileAccess.AccessType = accessType;
+            addedFileAccess.FileId = addedFile.Id;
+            addedFileAccess.Permissions = permission;
+            addedFileAccess.UserId = (int)Session["UserID"];
+
+            db.FileAccesses.Add(addedFileAccess);
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Users");
+        }
     }
 }

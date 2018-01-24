@@ -286,3 +286,10 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/FTPClient/FTPClient/Migrations
+/FTPClient/CodedUITestProject2
+/FTPClient/CodedUITestProject1
+*.csproj
+*.sln
+*.config
+/FTPClient/FTPClient/App_Data/uploads
