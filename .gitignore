@@ -292,3 +292,4 @@ __pycache__/
 *.csproj
 *.sln
 *.config
+/FTPClient/FTPClient/App_Data/uploads

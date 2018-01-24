@@ -1,21 +1,55 @@
 ﻿
 <div class="row" style="margin-top:20px;">
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Dodaj nowy plik do aktualnego folderu</h3>
-            </div>
-            <div class="panel-body">
-                @using (Html.BeginForm("AddFile", "Files", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                {
+    <div class="col-md-4" style="padding-right:40px;">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Dodaj nowy plik do aktualnego folderu</h3>
+                </div>
+                <div class="panel-body">
+                    @if(ViewBag.FileUploadErrorOccured != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            @ViewBag.FileUploadErrorMessage
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("AddFile", "Files", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
                     @Html.AntiForgeryToken()
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="file" name="newFile" />
+                            <input type="file" name="file" />
+                            <input type="hidden" name="fileFolderID" value="@ViewBag.CurrentDirectoryID" />
+                            <input type="hidden" name="accessType" value="1" />
+                            <input type="hidden" name="permission" value="7" />
                         </div>
                     </div>
                     <button class="btn btn-success">Wyślij</button>
-                }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Utworzu nowy folder w aktualnym katalogu</h3>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("AddDirectory", "Directories", FormMethod.Post))
+                    {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="newDirectory-name-input">Nazwa folderu</label>
+                            <input type="text" name="newDirectoryName" id="newDirectory-name-input" class="form-control"/>
+                            <input type="hidden" name="fileFolderID" value="@ViewBag.CurrentDirectoryID" />
+                        </div>
+                    </div>
+                    <button class="btn btn-success">Wyślij</button>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -34,15 +68,57 @@
                         <th>Uprawnienia</th>
                         <th>Operacje</th>
                     </tr>
+                    @if(ViewBag.ParentFolderID != null)
+                    {
                     <tr>
-                        <td>Nazwafolderu</td>
-                        <td>Owner</td>
-                        <td>rwx</td>
+                        <td>@Html.ActionLink("Folder wyżej", "goToHigherFolder")</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    }
+                    @using FTPClient.Controllers
+                    @foreach (var directory in ViewBag.userDirectories as List<DirData>) {
+                    <tr>
                         <td>
-                            @Html.ActionLink("Edit", "Edit", new { id=5 }) |
-                            @Html.ActionLink("Delete", "Delete", new { id=5 })
+                            
+                            @directory.dir.Name
+                        </td>
+                        <td>
+                            @directory.dirAccess.AccessType
+                        </td>
+                        <td>
+                            @if((directory.dirAccess.Permissions & 4) == 4)
+                            {
+                                <text>r</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                            @if((directory.dirAccess.Permissions & 2) == 2)
+                            {
+                                <text>w</text>
+                            }    
+                            else
+                            {
+                                <text>-</text>
+                            }
+                            @if((directory.dirAccess.Permissions & 1) == 1)
+                            {
+                                <text>x</text>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink("Zmień nazwę", "Edit", "Directories",null, new { id=directory.dir.Id }) |
+                            @Html.ActionLink("Usuń", "Delete", "Directories",null, new { id=directory.dir.Id })
                         </td>
                     </tr>
+                    }
                 </table>
             </div>
         </div>
@@ -61,72 +137,51 @@
                         <th>Uprawnienia</th>
                         <th>Operacje</th>
                     </tr>
-                    <tr>
-                        <td>Nazwafolderu</td>
-                        <td>5 kB</td>
-                        <td>Owner</td>
-                        <td>Dziś</td>
-                        <td>rwx</td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id=5 }) |
-                            @Html.ActionLink("Delete", "Delete", new { id=5 })
-                        </td>
-                    </tr>
+                    @foreach(var fileStruct in ViewBag.userFiles as List<FileData>)
+                    {
+                        <tr>
+                            <td>@fileStruct.file.Name</td>
+                            <td>@fileStruct.file.Size kB</td>
+                            <td>@fileStruct.fileAccess.AccessType</td>
+                            <td>@fileStruct.file.UploadTime</td>
+                            <td>
+                                @if((fileStruct.fileAccess.Permissions & 4) == 4)
+                                {
+                                    <text>r</text>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                                @if((fileStruct.fileAccess.Permissions & 2) == 2)
+                                {
+                                    <text>w</text>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                                @if((fileStruct.fileAccess.Permissions & 1) == 1)
+                                {
+                                    <text>x</text>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionLink("Zmień nazwę", "Edit","Files",null, new { id=fileStruct.file.Id }) |
+                                @Html.ActionLink("Usuń", "Delete", "Files",null,new { id=fileStruct.file.Id })
+                            </td>
+                        </tr>
+                    }
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-@*<table class="table">
-    <tr>
-        <th>
-            Nazwa
-        </th>
-        <th>
-            Operacje
-        </th>
-        <th></th>
-    </tr>
-
-    <tr>
-        <td>
-            @if(ViewBag.parentFolderId != 0)
-            {
-                @Html.ActionLink("folder wyżej", "Index", new {id = ViewBag.parentFolderId})
-            }
-        </td>
-        <td>
-
-        </td>
-    </tr>
-
-    @foreach (var directory in ViewBag.userDirectories) {
-        <tr>
-            <td>
-                @directory.Name
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=directory.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=directory.Id })
-            </td>
-        </tr>
-    }
-
-    @foreach (var file in ViewBag.userFiles) {
-    <tr>
-        <td>
-            @file.Name
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=file.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=file.Id }) |
-            @Html.ActionLink("Pobierz", "Download", new { id=file.Id })
-        </td>
-    </tr>
-    }
-
-</table>*@
 
 <asp:CalendarExtender ID="ControlIDHere" runat="server" Enabled="True"
                       TargetControlID="TextBoxIDHere" PopupButtonID="CalenderImageIDHere" Format="MM/dd/yyyy">

@@ -11,6 +11,9 @@ using FTPClient.Models;
 
 namespace FTPClient.Controllers
 {
+    public struct DirData { public Directory dir; public DirectoryAccess dirAccess; };
+    public struct FileData { public File file; public FileAccess fileAccess; };
+
     public class UsersController : Controller
     {
         private DataModel db = new DataModel();
@@ -21,9 +24,65 @@ namespace FTPClient.Controllers
             if (Session["UserID"] == null)
                return RedirectToAction("Index", "Home");
 
-            ViewBag.userDirectories = db.Directories.ToList();
-            ViewBag.userFiles = db.Files.ToList();
-            return View(db.Users.ToList());
+            if(TempData["FileUploadErrorOccured"] != null)
+            {
+                ViewBag.FileUploadErrorOccured = TempData["FileUploadErrorOccured"];
+                ViewBag.FileUploadErrorMessage = TempData["FileUploadErrorMessage"];
+            }
+
+            List<DirData> dirList = new List<DirData>();
+
+            int userID = (int)Session["UserID"];
+            int currDirId = 0;
+            if(TempData["currentDirectoryID"] == null)
+            {
+                var userAccesses = db.DirectoryAccesses.Where(da => da.UserId == userID && da.AccessType == 1);
+                foreach(var acc in userAccesses)
+                {
+                    var dirToCheck = db.Directories.Where(d => d.Id == acc.DirectoryId && d.ParentDirectory == null).FirstOrDefault();
+
+                    if (dirToCheck != null)
+                    {
+                        currDirId = dirToCheck.Id;
+                        ViewBag.ParentFolderID = dirToCheck.ParentDirectoryId;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                currDirId = (int)TempData["currentDirectoryID"];
+            }
+
+            ViewBag.CurrentDirectoryID = currDirId;
+            var dirAccesses = db.DirectoryAccesses.Where(da => da.DirectoryId == currDirId && da.UserId == userID);           
+            foreach(var dirAccess in dirAccesses)
+            {
+                var dir = db.Directories.Where(a => a.Id == dirAccess.DirectoryId).FirstOrDefault();
+
+                DirData newData = new DirData();
+                newData.dir = dir;
+                newData.dirAccess = dirAccess;
+                dirList.Add(newData);
+            }
+
+            ViewBag.userDirectories = dirList;
+
+
+            List<FileData> fileDataList = new List<FileData>();
+            var filesFromCurrDir = db.Files.Where(f => f.DirectoryId == currDirId);
+            foreach(var file in filesFromCurrDir)
+            {
+                var fileAccess = db.FileAccesses.Where(fa => fa.FileId == file.Id && fa.UserId == userID).First();
+                FileData newFile = new FileData();
+                newFile.file = file;
+                newFile.fileAccess = fileAccess;
+                fileDataList.Add(newFile);
+            }
+
+            ViewBag.userFiles = fileDataList;
+
+            return View();
         }
 
         // GET: Users/Details/5
