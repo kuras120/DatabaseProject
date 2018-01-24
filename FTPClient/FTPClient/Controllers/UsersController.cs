@@ -52,6 +52,8 @@ namespace FTPClient.Controllers
             else
             {
                 currDirId = (int)TempData["currentDirectoryID"];
+                var currDir = db.Directories.Where(d => d.Id == currDirId).FirstOrDefault();
+                ViewBag.ParentFolderID = currDir.ParentDirectoryId;
             }
 
             ViewBag.CurrentDirectoryID = currDirId;

@@ -73,7 +73,13 @@
                     @if(ViewBag.ParentFolderID != null)
                     {
                     <tr>
-                        <td>@Html.ActionLink("Folder wyżej", "goToHigherFolder")</td>
+                        <td>@using (Html.BeginForm("goToDirectory", "Directories", FormMethod.Post, new { id = "goToParentForm" }))
+                            {
+                            @Html.AntiForgeryToken();
+                            <a href="#" onclick="$('#goToParentForm').submit()">Folder wyżej</a>
+                            <input type="hidden" name="dirId" value="@ViewBag.ParentFolderID" />
+                            }
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -83,8 +89,14 @@
                     @foreach (var directory in ViewBag.userDirectories as List<DirData>) {
                     <tr>
                         <td>
-                            
-                            @directory.dir.Name
+                            @{string formId = "goToDirForm-" + directory.dir.Id;}
+                            @using (Html.BeginForm("goToDirectory", "Directories", FormMethod.Post, new { id = formId }))
+                            {
+                            string formSubmitLink = "$(\'#" + formId + "\').submit()";
+                            @Html.AntiForgeryToken();
+                            <a href="#" onclick="@formSubmitLink">@directory.dir.Name</a>
+                            <input type="hidden" name="dirId" value="@directory.dir.Id" />
+                            }
                         </td>
                         <td>
                             @directory.dirAccess.AccessType

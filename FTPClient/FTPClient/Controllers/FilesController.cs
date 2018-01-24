@@ -166,7 +166,9 @@ namespace FTPClient.Controllers
             db.FileAccesses.Add(addedFileAccess);
             db.SaveChanges();
 
-            return RedirectToAction("Index", "Users");
+            TempData["targetDirId"] = fileFolderID;
+
+            return RedirectToAction("goToDirectory", "Directories");
         }
     }
 }
