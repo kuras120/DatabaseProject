@@ -207,5 +207,15 @@ namespace FTPClient.Controllers
 
             return RedirectToAction("goToDirectory", "Directories");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public FileResult Download(int fileId)
+        {
+            var file = db.Files.Where(f => f.Id == fileId).FirstOrDefault();
+            var fileStream = new FileStreamResult(new System.IO.FileStream(file.Path, System.IO.FileMode.Open), "binary");
+            fileStream.FileDownloadName = file.Name;
+            return fileStream;
+        }
     }
 }
